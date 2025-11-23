@@ -33,7 +33,7 @@ public class MainApp {
             Player player = null;
             Enemy enemy = null;
 
-            String[] playerActionLog = new String[500]; // Changed to String[] for descriptive logs
+            String[] playerActionLog = new String[500];
             String[] enemyActionLog = new String[500];
             int playerLogIndex = 0, enemyLogIndex = 0;
 
@@ -102,7 +102,7 @@ public class MainApp {
                     if (player instanceof Shapeshifter) {
                         Shapeshifter shapeshifter = (Shapeshifter) player;
                         Shapeshifter.Form form = shapeshifter.getCurrentForm();
-                        int optionNumber = 3;  // Start numbering after Skill1
+                        int optionNumber = 3;
 
                         if (form == Shapeshifter.Form.DRAGON) {
                             System.out.println("[" + optionNumber + "] " + player.getSkill2Name() + (player.getSkill2Cooldown() == 0 ? " [Ready]" : " [Cooldown: " + player.getSkill2Cooldown() + " turn(s)]"));
@@ -123,7 +123,7 @@ public class MainApp {
                             ultStatus = " [Not Ready]";
                         }
 
-                        System.out.println("[" + optionNumber + "] " + player.getUltimateName() + ultStatus);  // Fixed: ultStatus now appended
+                        System.out.println("[" + optionNumber + "] " + player.getUltimateName() + ultStatus);
                         optionNumber++;
                         System.out.println("[" + optionNumber + "] Heal");
                     } else {
@@ -151,7 +151,7 @@ public class MainApp {
 
                     System.out.println("\n--- Your Turn ---");
 
-                    String logEntry = ""; // For logging the action
+                    String logEntry = "";
                     if (player instanceof Shapeshifter) {
                         Shapeshifter shapeshifter = (Shapeshifter) player;
                         Shapeshifter.Form form = shapeshifter.getCurrentForm();
@@ -185,7 +185,6 @@ public class MainApp {
                                         logEntry = "used Skill 3 (buff/effect)";
                                     }
                                 } else {
-                                    // HUMAN form: Ultimate is now [3]
                                     int dmg = player.ultimate(enemy);
                                     if (dmg > 0) {
                                         logEntry = dmg + " damage to enemy (Ultimate)";
@@ -196,11 +195,9 @@ public class MainApp {
                             }
                             case 4 -> {
                                 if (form == Shapeshifter.Form.HUMAN) {
-                                    // HUMAN form: Heal is [4]
                                     player.heal();
                                     logEntry = "healed " + 40 + " HP";
                                 } else {
-                                    // DRAGON/GOLEM: Ultimate is [4]
                                     int dmg = player.ultimate(enemy);
                                     if (dmg > 0) {
                                         logEntry = dmg + " damage to enemy (Ultimate)";
@@ -211,7 +208,6 @@ public class MainApp {
                             }
                             case 5 -> {
                                 if (form != Shapeshifter.Form.HUMAN) {
-                                    // DRAGON/GOLEM: Heal is [5]
                                     player.heal();
                                     logEntry = "healed " + 40 + " HP";
                                 } else {
@@ -243,7 +239,7 @@ public class MainApp {
                                     logEntry = "used Skill 1 (buff/effect)";
                                 }
                             }
-                            case 3 -> {  // Fixed: Now skill2 (was incorrectly ultimate)
+                            case 3 -> { 
                                 int dmg = player.skill2(enemy);
                                 if (dmg > 0) {
                                     logEntry = dmg + " damage to enemy (Skill 2)";
@@ -251,7 +247,7 @@ public class MainApp {
                                     logEntry = "used Skill 2 (buff/effect)";
                                 }
                             }
-                            case 4 -> {  // Fixed: Now skill3
+                            case 4 -> { 
                                 int dmg = player.skill3(enemy);
                                 if (dmg > 0) {
                                     logEntry = dmg + " damage to enemy (Skill 3)";
@@ -259,7 +255,7 @@ public class MainApp {
                                     logEntry = "used Skill 3 (buff/effect)";
                                 }
                             }
-                            case 5 -> {  // Fixed: Now ultimate (was duplicate)
+                            case 5 -> {
                                 int dmg = player.ultimate(enemy);
                                 if (dmg > 0) {
                                     logEntry = dmg + " damage to enemy (Ultimate)";
@@ -269,7 +265,7 @@ public class MainApp {
                             }
                             case 6 -> {
                                 player.heal();
-                                logEntry = "healed " + 40 + " HP"; // Assuming heal amount is 40 as per Character.java
+                                logEntry = "healed " + 40 + " HP";
                             }
                             default -> {
                                 System.out.println("Invalid choice. Turn wasted!");
@@ -277,11 +273,11 @@ public class MainApp {
                             }
                         }
                     }
-                    playerActionLog[playerLogIndex++] = logEntry; // Log the descriptive string
+                    playerActionLog[playerLogIndex++] = logEntry;
                 }
 
-                // Feature 1: Wait 1-2 seconds after player turn before enemy turn
-                try { Thread.sleep(1000 + rand.nextInt(1000)); } catch (Exception ignored) {}
+                // Wait 0.8-1.8 seconds after player turn before enemy turn
+                try { Thread.sleep(8000 + rand.nextInt(1000)); } catch (Exception ignored) {}
 
                 if (!enemy.isAlive()) break;
 
@@ -301,11 +297,9 @@ public class MainApp {
 
                 if (!player.isAlive()) break;
 
-                // Reduce cooldowns
                 player.reduceCooldowns();
                 enemy.reduceCooldowns();
 
-                // Turn summary
                 System.out.println("\n--- TURN SUMMARY ---");
                 System.out.println("Player HP: " + player.getHealth() + "/" + player.getMaxHealth() + " | Enemy HP: " + enemy.getHealth() + "/" + enemy.getMaxHealth());
 
@@ -330,7 +324,6 @@ public class MainApp {
                     System.out.println("Round " + (i + 1) + ": " + enemyActionLog[i]);
                 }
 
-                // Feature 2: Ask to play again
                 while (true) {
                     System.out.println("\n--------------------------------------------");
                     System.out.print("\nDo you want to play again? (yes/no): ");

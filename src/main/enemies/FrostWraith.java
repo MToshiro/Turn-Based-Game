@@ -3,70 +3,77 @@ package main.enemies;
 import main.GameCharacter;
 import main.characters.Player;
 
+// FrostWraith class - fast, evasive enemy with freeze abilities
 public class FrostWraith extends Enemy {
-    public FrostWraith() { super("Frost Wraith", 160, 24, 25, 30); }  // Increased HP to 160, attack to 24
+    // Set up FrostWraith with high HP, high attack, high dodge, good crit
+    public FrostWraith() {
+        super("Frost Wraith", 160, 24, 25, 30); // HP: 160, Attack: 24, Dodge: 25, Crit: 30
+    }
 
+    // Skill 1: Ice Slash – moderate attack, low cooldown
     @Override
-    public int skill1(GameCharacter target) {  // Ice Slash
+    public int skill1(GameCharacter target) {
         if (cd1 > 0) return 0;
         cd1 = 2;
         gainEnergy(12);
-        int dmg = 22 + rand.nextInt(8);  // Increased from 18+8 to 22+8
-        System.out.println("❄️ Frost Wraith used ICE SLASH!");
+        int dmg = 22 + rand.nextInt(8); // 22-29 damage
+        System.out.println("Frost Wraith used ICE SLASH!");
         return target.receiveDamage(applyCrit(dmg)) ? dmg : 0;
     }
 
+    // Skill 2: Frozen Arrow – strong attack, chance to freeze
     @Override
-    public int skill2(GameCharacter target) {  // Frozen Arrow (chance to freeze)
+    public int skill2(GameCharacter target) {
         if (cd2 > 0) return 0;
         cd2 = 3;
         gainEnergy(18);
-        int dmg = 25 + rand.nextInt(10);  // Increased from 20+10 to 25+10
-        System.out.println("🧊 Frost Wraith used FROZEN ARROW! (chance to freeze)");
+        int dmg = 25 + rand.nextInt(10); // 25-34 damage
+        System.out.println("Frost Wraith used FROZEN ARROW!");
         boolean applied = target.receiveDamage(applyCrit(dmg));
-        if (applied && rand.nextInt(100) < 40) target.applyFreeze(1);
+        if (applied && rand.nextInt(100) < 40) { // 40% chance to freeze
+            target.applyFreeze(1);
+        }
         return applied ? dmg : 0;
     }
 
+    // Skill 3: Snow Cloak – buffs self dodge (no damage)
     @Override
-    public int skill3(GameCharacter target) {  // Snow Cloak (temporary dodge increase for self)
+    public int skill3(GameCharacter target) {
         if (cd3 > 0) return 0;
         cd3 = 4;
         gainEnergy(12);
-        System.out.println("🌨️ Frost Wraith used SNOW CLOAK! (temporary dodge boost for itself)");
-        this.applyTempDodgeBonus(3); // Now buffs itself instead of the target
-        return 0; // No damage, just effect
+        System.out.println("Frost Wraith used SNOW CLOAK! Gains dodge.");
+        this.applyTempDodgeBonus(3); // High dodge for next 3 turns
+        return 0;
     }
 
+    // Ultimate: Absolute Zero – powerful attack, guaranteed freeze
     @Override
-    public int ultimate(GameCharacter target) {  // Absolute Zero
+    public int ultimate(GameCharacter target) {
         if (!canUseUltimate()) return 0;
         ultCd = 6;
         spendAllEnergy();
-        int dmg = 50 + rand.nextInt(11);  // Increased from 45+11 to 50+11
-        System.out.println("❄️ Frost Wraith used ABSOLUTE ZERO! (freezes you)");
+        int dmg = 50 + rand.nextInt(11); // 50-60 damage
+        System.out.println("Frost Wraith used ABSOLUTE ZERO!");
         boolean applied = target.receiveDamage(applyCrit(dmg));
-        if (applied) target.applyFreeze(1);
+        if (applied) target.applyFreeze(1); // Guaranteed freeze
         return applied ? dmg : 0;
     }
 
+    // Enemy AI: picks action based on HP, energy, and skill cooldowns
     @Override
     public int decideAction(Player player) {
-        // Smarter AI: Prioritize healing at low HP, ultimate when ready, then skills/basic
-        if (health <= maxHealth * 0.25 && healsLeft > 0 && rand.nextInt(100) < 75) {
+        if (health < maxHealth * 0.25 && healsLeft > 0 && rand.nextInt(100) < 75) {
             heal();
             return 0;
         }
         if (canUseUltimate()) return ultimate(player);
         int pick = rand.nextInt(100);
-        if (pick < 35) {
-            return performBasicAttack(player);
-        } else if (pick < 65) {
-            int d = skill2(player);
-            return d > 0 ? d : performBasicAttack(player);
+        if (pick < 35) return performBasicAttack(player);
+        else if (pick < 65) {
+            int d = skill2(player); return d > 0 ? d : performBasicAttack(player);
         } else {
-            int d = skill3(player); // Prioritize buff skill
-            return d > 0 ? d : performBasicAttack(player);
+            int d = skill3(player); return d > 0 ? d : performBasicAttack(player);
         }
     }
 }

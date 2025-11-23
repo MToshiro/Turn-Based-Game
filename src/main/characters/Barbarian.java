@@ -2,94 +2,113 @@ package main.characters;
 
 import main.GameCharacter;
 
+// Barbarian class - high damage melee fighter with a rage mechanic
 public class Barbarian extends Player {
+    // Cooldowns for all three skills
     private int cd1, cd2, cd3;
-    private boolean inRage; // Rage state
+    // Whether the Barbarian is currently in Rage mode
+    private boolean inRage;
 
+    // Set up Barbarian stats and initial cooldowns/rage state
     public Barbarian() {
         super("Barbarian", 150, 22, 10);
         cd1 = cd2 = cd3 = 0;
         inRage = false;
     }
 
+    // Lower crit chance and multiplier for Barbarian (defaults for this hero)
     @Override
-    protected int critChance() { return 10; } // Low crit chance
-
+    protected int critChance() { return 10; }
     @Override
-    protected double critMultiplier() { return 1.0; } // Basic crit damage
+    protected double critMultiplier() { return 1.0; }
 
-    // Passive: Check and activate rage at low HP
+    // Check for rage activation: triggers if health drops below 20% and not already enraged
     private void checkRage() {
-        if (!inRage && health <= maxHealth * 0.2) { // 20% HP
+        if (!inRage && health <= (int) (maxHealth * 0.2)) {
             inRage = true;
-            System.out.println("🔥 BARBARIAN ENTERS RAGE FORM! Damage doubled, defense reduced!");
+            System.out.println("BARBARIAN ENTERS RAGE FORM! Damage doubled, defense reduced!");
         }
     }
 
-    // Modify outgoing damage based on rage
+    // If in rage, deal double damage for skills/attacks
     private int applyRageDamage(int dmg) {
         return inRage ? dmg * 2 : dmg;
     }
 
-    // Override receiveDamage to apply rage penalty
+    // While in rage, Barbarian also takes double damage
     @Override
     public boolean receiveDamage(int dmg) {
-        if (inRage) {
-            dmg *= 2; // Takes double damage while enraged
-        }
+        if (inRage) dmg *= 2;
         boolean hit = super.receiveDamage(dmg);
-        checkRage(); // Rage may activate after damage
+        checkRage(); // See if rage should now activate
         return hit;
     }
 
+    // Skill 1: Lethal Swing (quick attack, low cooldown)
     @Override
-    public int skill1(GameCharacter target) { // Lethal Swing (light attack)
-        if (cd1 > 0) { System.out.println("❌ Lethal Swing cooling down (" + cd1 + " turns left)"); return 0; }
+    public int skill1(GameCharacter target) {
+        if (cd1 > 0) {
+            System.out.println("Lethal Swing cooling down (" + cd1 + " turns left)");
+            return 0;
+        }
         cd1 = 2;
         checkRage();
         gainEnergy(15);
-        int dmg = baseAttack + 6; // 28 damage
+        int dmg = baseAttack + 6;
         dmg = applyRageDamage(dmg);
-        System.out.println("⚔️ Barbarian used LETHAL SWING!");
+        System.out.println("Barbarian used LETHAL SWING!");
         return target.receiveDamage(applyCrit(dmg)) ? dmg : 0;
     }
 
+    // Skill 2: Bone Crusher (heavy attack)
     @Override
-    public int skill2(GameCharacter target) { // Bone Crusher (heavy attack)
-        if (cd2 > 0) { System.out.println("❌ Bone Crusher cooling down (" + cd2 + " turns left)"); return 0; }
+    public int skill2(GameCharacter target) {
+        if (cd2 > 0) {
+            System.out.println("Bone Crusher cooling down (" + cd2 + " turns left)");
+            return 0;
+        }
         cd2 = 3;
         checkRage();
         gainEnergy(20);
-        int dmg = baseAttack + 13; // 35 damage
+        int dmg = baseAttack + 13;
         dmg = applyRageDamage(dmg);
-        System.out.println("💥 Barbarian used BONE CRUSHER!");
+        System.out.println("Barbarian used BONE CRUSHER!");
         return target.receiveDamage(applyCrit(dmg)) ? dmg : 0;
     }
 
+    // Skill 3: Furious Flail (strongest attack outside of ultimate)
     @Override
-    public int skill3(GameCharacter target) { // Furious Flail (projectile attack)
-        if (cd3 > 0) { System.out.println("❌ Furious Flail cooling down (" + cd3 + " turns left)"); return 0; }
+    public int skill3(GameCharacter target) {
+        if (cd3 > 0) {
+            System.out.println("Furious Flail cooling down (" + cd3 + " turns left)");
+            return 0;
+        }
         cd3 = 4;
         checkRage();
         gainEnergy(25);
-        int dmg = baseAttack + 19; // 41 damage
+        int dmg = baseAttack + 19;
         dmg = applyRageDamage(dmg);
-        System.out.println("🌪️ Barbarian used FURIOUS FLAIL!");
+        System.out.println("Barbarian used FURIOUS FLAIL!");
         return target.receiveDamage(applyCrit(dmg)) ? dmg : 0;
     }
 
+    // Ultimate: Primal Annihilation (massive damage; rage amplifies it even more)
     @Override
-    public int ultimate(GameCharacter target) { // Primal Annihilation
-        if (!canUseUltimate()) { System.out.println("❌ Ultimate not ready or on cooldown."); return 0; }
+    public int ultimate(GameCharacter target) {
+        if (!canUseUltimate()) {
+            System.out.println("Ultimate not ready or on cooldown.");
+            return 0;
+        }
         setUltimateOnCooldown(5);
         checkRage();
         spendAllEnergy();
-        int dmg = baseAttack * 4; // 88 damage
+        int dmg = baseAttack * 4;
         dmg = applyRageDamage(dmg);
-        System.out.println("💥 BARBARIAN unleashes PRIMAL ANNIHILATION!");
+        System.out.println("BARBARIAN unleashes PRIMAL ANNIHILATION!");
         return target.receiveDamage(applyCrit(dmg)) ? dmg : 0;
     }
 
+    // Each turn, reduce each skill’s cooldown timer if active
     @Override
     public void reduceCooldowns() {
         if (cd1 > 0) cd1--;
@@ -97,7 +116,6 @@ public class Barbarian extends Player {
         if (cd3 > 0) cd3--;
     }
 
-    // Implement new methods
     @Override
     public String getSkill1Name() { return "Lethal Swing"; }
     @Override
