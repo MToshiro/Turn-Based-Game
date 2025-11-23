@@ -111,17 +111,14 @@ Play again? (yes/no)
 
 
 **Authors:**  
-*Member*
-(*your.email@provider.com*)
-
-*Member*
-(*your.email@provider.com*)
-
-*Member*
-(*your.email@provider.com*)
-
-*Member*
-(*your.email@provider.com*)
+- *James Benedict A. Praxides*
+(*24-03662@g.batstate-u.edu.ph*)
+- *John Lorenz G. De Alva*
+(*24-06251@g.batstate-u.edu.ph*)
+- *Lee Ambross M. Manalo*
+(*24-07344@g.batstate-u.edu.ph*)
+- *Mark Lawrence M. Cabali*
+(*24-01285@g.batstate-u.edu.ph*)
 
 **Acknowledgements:**  
 - Thanks to our Instructor for guidance and feedback.
@@ -142,6 +139,6 @@ Play again? (yes/no)
 - OOP Concepts Overview : [Programiz](https://www.programiz.com/java-programming/object-oriented-programming)
 - Sample tutorials : [w3schools.com](https://www.w3schools.com/), [Programiz](https://www.programiz.com/java-programming/object-oriented-programming)
 - Youtube Tutorial/s : [YouTube Video](https://youtu.be/OFnFHjzbUVI?si=azjRLnBJtzfWxveg)
-- AI's : 
+- AI's : [ChatGPT](https://chatgpt.com/)
 
 ---
